@@ -20,12 +20,12 @@ documented API surface is proven by a real C++ compile-probe — not a name grep
     foundations/   (3)         object-model · rendering-model · scene-and-state ("why")
     components/    (12)         core, scene-graph, app, state, maths, io, commands,
                                utils, text, lighting, animation, threading ("what")
-    examples/      (4)         compile-verified exemplar docs (hello/view-model/builder + index)
+    examples/      (5)         compile-verified exemplar docs (hello/view-model/builder/custom-geometry + index)
     patterns.md                copy-paste recipes
     anti-patterns.md           Bad | Good | Why registry
-  probe/                       C++ compile-probe (the validation gate) + CMake + runner
-  examples/                    runnable example programs (build against installed VSG)
-  scripts/                     check-skill-docs.sh (audit) + check-citations.py (resolver)
+  probe/                       C++ compile-probe (constructs a real pipeline) + CMake + runner
+  examples/                    4 runnable example programs (build against installed VSG)
+  scripts/                     check-skill-docs.sh (7-gate audit) + check-citations.py + check-examples-sync.py
 
 examples-consumer/             a downstream app built SOLELY from the skill (dogfood proof)
 ```
@@ -67,14 +67,17 @@ Two independent grounding gates ship with the skill.
 
 ## Provenance & version
 
-- **Authoritative source**: the VSG headers (`include/vsg`, master `v1.1.15`); idiomatic
-  wiring is grounded in `src/vsg`. The skill documents the public C++ API and its wiring.
+- **Authoritative source**: the VSG headers (`include/vsg`), pinned to commit `3b986a00`
+  (`v1.1.15-10-g3b986a00`); idiomatic wiring is grounded in `src/vsg`. The skill cites each
+  rule by `file:line` against that commit (re-run the audit after syncing to a newer master).
 - **Validated against**: a locally installed `vsg::vsg` `1.1.14` (one patch behind the
-  cited master — the stable core API is identical across that delta; see
+  pinned commit — the stable core API is identical across that delta; see
   `.claude/skills/vsg/probe/README.md`).
-- Last full audit: `CHECK_SKILL_DOCS=PASS` — 1281/1281 citations resolve, 0 `[VERIFY]`,
-  probe + examples + the `examples-consumer/` downstream app all compile & link, and the
-  consumer ran headless for one frame (loaded a real model, compiled, presented, exit 0).
+- Last full audit: `CHECK_SKILL_DOCS=PASS` (7 gates) — 1295/1295 citations resolve, 0 `[VERIFY]`,
+  example docs match their `.cpp` twins (EXAMPLE-SYNC), the probe constructs a real pipeline +
+  descriptor, and probe + 4 examples + the `examples-consumer/` app all compile & link. Proven
+  by **clean-room generation**: an agent given only this skill (no headers) generated a
+  custom-pipeline app that compiled against installed VSG.
 
 ## License
 

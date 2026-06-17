@@ -19,7 +19,7 @@ if ! cmake -S "$here" -B "$build" -DCMAKE_PREFIX_PATH="$prefix" -DCMAKE_BUILD_TY
     echo "EXAMPLES_RESULT=FAIL"; exit 1
 fi
 
-echo "== building hello_vsg, view_model, builder_primitives =="
+echo "== building hello_vsg, view_model, builder_primitives, custom_geometry =="
 if ! cmake --build "$build" -j; then
     echo "EXAMPLES_RESULT=FAIL"; exit 1
 fi

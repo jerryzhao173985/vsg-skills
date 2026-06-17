@@ -5,7 +5,9 @@
 #   2 HEADINGS       every component/foundation file ships its required sections
 #   3 CITATIONS      every (path:line) cite resolves to a real repo source line
 #   4 VERIFY         tally of [VERIFY] markers left in references/
-#   5 PROBE          (with --probe) the compile-probe builds against vsg::vsg
+#   5 EXAMPLE-SYNC   example docs show only code that exists in their .cpp twin
+#   6 PROBE          (with --probe) the compile-probe builds against vsg::vsg
+#   7 EXAMPLES       (with --probe) the example programs compile + link
 #
 # Usage: scripts/check-skill-docs.sh [--probe]
 #   VSG_SRC=/path/to/VulkanSceneGraph   override the VSG source tree the citations resolve against
@@ -61,11 +63,15 @@ grep -rn '\[VERIFY\]' "$refs" 2>/dev/null | sed 's/^/  /'
 echo "  (markers are advisory, not a failure; resolve or accept each)"
 
 echo ""
+echo "== 5 EXAMPLE-SYNC: example docs match their compile-verified .cpp twins =="
+if python3 "$here/check-examples-sync.py" "$skill"; then echo "  EXAMPLE-SYNC: PASS"; else echo "  EXAMPLE-SYNC: FAIL"; fail=1; fi
+
+echo ""
 if [ "${1:-}" = "--probe" ]; then
-    echo "== 5 PROBE: compile documented API surface against vsg::vsg =="
+    echo "== 6 PROBE: compile documented API surface against vsg::vsg =="
     if bash "$skill/probe/run-probe.sh" 2>&1 | tail -3; then echo "  PROBE: see PROBE_RESULT above"; else echo "  PROBE: FAIL"; fail=1; fi
     echo ""
-    echo "== 6 EXAMPLES: compile + link the complete example programs =="
+    echo "== 7 EXAMPLES: compile + link the complete example programs =="
     if bash "$skill/examples/build-examples.sh" 2>&1 | tail -3; then echo "  EXAMPLES: see EXAMPLES_RESULT above"; else echo "  EXAMPLES: FAIL"; fail=1; fi
     echo ""
 fi

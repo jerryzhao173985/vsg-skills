@@ -21,7 +21,7 @@ int main(int argc, char** argv)
     auto directional = vsg::DirectionalLight::create();
     directional->color = vsg::vec3(1.0f, 1.0f, 1.0f);
     directional->intensity = 0.8f;
-    directional->direction = vsg::vec3(0.5f, 1.0f, -1.0f);
+    directional->direction = vsg::dvec3(0.5, 1.0, -1.0);
     scene->addChild(directional);
 
     // primitives positioned with MatrixTransforms

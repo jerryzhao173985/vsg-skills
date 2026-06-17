@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # that proves references/examples/*.md ground in the real API.
 find_package(vsg REQUIRED)
 
-foreach(example hello_vsg view_model builder_primitives)
+foreach(example hello_vsg view_model builder_primitives custom_geometry)
     add_executable(${example} ${example}.cpp)
     target_link_libraries(${example} vsg::vsg)
 endforeach()

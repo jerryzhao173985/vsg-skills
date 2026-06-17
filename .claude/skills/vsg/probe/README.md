@@ -28,8 +28,8 @@ follow `../references/patterns.md` (Minimal application skeleton).
 
 ## Version note
 
-Citations in `../references/` point at the repo headers (master, `v1.1.15`). This probe
-links the locally installed `vsg::vsg` (currently `1.1.14`) — one patch behind. The
+Citations in `../references/` are pinned to VSG commit `3b986a00` (`v1.1.15-10-g3b986a00`).
+This probe links the locally installed `vsg::vsg` (currently `1.1.14`) — one patch behind. The
 documented surface is the stable core, identical across that delta. If a future
 documented symbol exists only on master and fails to compile here, that is the signal
 to mark it `[VERIFY]` rather than ship it unproven.

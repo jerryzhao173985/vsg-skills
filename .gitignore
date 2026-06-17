@@ -3,5 +3,7 @@ build/
 **/build/
 # macOS
 .DS_Store
+# stray tooling state
+.omc/
 # editor/OS noise
 *.swp

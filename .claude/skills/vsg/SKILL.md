@@ -73,10 +73,19 @@ int main(int argc, char** argv)
 
 Code wins over prose on every conflict. In precedence order:
 
-1. **Authoritative API** — the headers in this repo under `include/vsg/<module>/*.h` (VSG `v1.1.15`, master). Every `references/` rule cites these by `file:line`.
+1. **Authoritative API** — the headers under `include/vsg/<module>/*.h`, pinned to VSG commit **`3b986a00`** (`v1.1.15-10-g3b986a00`). Every `references/` rule cites these by `file:line` **against that commit**; line numbers drift if you sync to a newer `master`, so re-run `scripts/check-skill-docs.sh` after updating VSG. The audit *line-resolves* every citation; the compile-probe is the *semantic* gate (it proves signatures link, not merely that a line exists).
 2. **Idiomatic wiring** — the implementations under `src/vsg/<module>/*.cpp`. Cited when a rule depends on runtime behavior (e.g. what `compile()` traverses, the exact frame-loop order).
 3. **Concepts & tutorials** — https://vsg-dev.github.io/vsg-dev.io and https://vsg-dev.github.io/vsgTutorial (Foundations / Scene Graph / Application). Cited for framing; never authoritative over the headers on a signature.
-4. **Build/link reality** — the locally installed `vsg::vsg` (currently 1.1.14) used by the compile-probe in `probe/`. A documented symbol that fails to compile against it is flagged, never shipped silently.
+4. **Build/link reality** — the locally installed `vsg::vsg` (`1.1.14`, one patch behind the pinned commit; stable core API is identical across that delta) used by the compile-probe in `probe/`. A documented symbol that fails to compile against it is flagged, never shipped silently.
+
+## Out of scope
+
+This skill covers the **core public C++ API of the VulkanSceneGraph library itself**. It deliberately does NOT cover — and an agent should say so and point at the right home rather than improvise an API:
+
+- **Companion libraries** — `vsgXchange` (glTF/OBJ/image loaders, HTTP), `vsgImGui`, `vsgQt`, `vsgPoints`, `osg2vsg`. Non-native model formats (anything but `.vsgt`/`.vsgb`) need `vsgXchange`; `read_cast` returns null without it. Each is a separate `find_package` dependency.
+- **Niche VSG modules** — ray tracing (`include/vsg/raytracing/`), mesh shaders (`meshshaders/`), and the low-level Vulkan wrappers in `include/vsg/vk/` (use the higher-level `state`/`app` objects instead).
+- **Custom `ReaderWriter` authoring**, GPU compute beyond a passing mention, and platform windowing internals (`platform/`).
+- **Shader authoring** (GLSL/SPIR-V *content*). The skill shows how to *wire* a `ShaderSet`/pipeline (see `references/components/state.md` + `utils.md`), not how to write shader code.
 
 ## When to Load References
 
@@ -85,7 +94,7 @@ Code wins over prose on every conflict. In precedence order:
 | user constructs/owns VSG objects, uses `ref_ptr`/`observer_ptr`, writes a Visitor, or builds `Data`/`Array`/`Value` | `references/foundations/object-model.md`, `references/components/core.md` | the memory & RTTI contract every other file assumes |
 | user sets up a window, viewer, camera, or the render loop | `references/foundations/rendering-model.md`, `references/components/app.md` | compile → record → submit → present pipeline |
 | user composes a scene graph, transforms, or binds state to a subtree | `references/foundations/scene-and-state.md`, `references/components/scene-graph.md` | Group/Transform/StateGroup/geometry leaves |
-| user configures pipelines, shaders, descriptors, or textures | `references/components/state.md` | Vulkan state as VSG objects |
+| user configures pipelines, shaders, descriptors, or textures, or builds custom geometry | `references/components/state.md`, `references/examples/custom-geometry.md` | Vulkan state as VSG objects; the hand-built `ShaderSet`/`GraphicsPipelineConfigurator` path |
 | user does vector/matrix/quaternion maths or transforms | `references/components/maths.md` | header-only `vec*`/`mat*`/`transform` |
 | user loads or saves models/data, or uses `Options`/`Logger` | `references/components/io.md` | `read`/`read_cast`/`write`, native `.vsgt`/`.vsgb` |
 | user records draw/dispatch/copy commands | `references/components/commands.md` | `Command`/`Commands`/`Draw`/`Bind*` |
@@ -99,21 +108,25 @@ Code wins over prose on every conflict. In precedence order:
 | hello_vsg: the minimal app | `references/examples/hello-vsg.md` | window + scene + trackball + loop |
 | view_model: load & view a model | `references/examples/view-model.md` | `read_cast`, `CommandLine`, framing from `ComputeBounds` |
 | builder_primitives: geometry + lights | `references/examples/builder-primitives.md` | `Builder` primitives, `MatrixTransform`, light nodes |
+| custom_geometry: own mesh + pipeline (no Builder) | `references/examples/custom-geometry.md` | `ShaderSet` + `GraphicsPipelineConfigurator` + `VertexIndexDraw` + material descriptor |
 | (audit/registry) recurring API mistakes | `references/anti-patterns.md` | `Bad \| Good \| Why`; rules also mirrored in Hard rules + component files |
 | (maintenance) prove the skill grounds in real source | `probe/`, `scripts/check-skill-docs.sh` | compile-probe + citation resolver |
 
 ## Component slate
 
-The confirmed extraction slate — each resolves to its own `references/components/<name>.md`:
+Each entry resolves to its own `references/components/<name>.md`. **CORE** is load-bearing for essentially every app; **EXTENDED** is reached for on demand. Steer attention to CORE first.
 
+**CORE**
 - `core` — object model: `Object`, `Inherit`/`create`, `ref_ptr`/`observer_ptr`, `Data`/`Value`/`Array`, `Visitor`.
 - `scene-graph` — nodes: `Group`, `StateGroup`, `MatrixTransform`, `Switch`, `LOD`/`PagedLOD`, `CullGroup`, `Geometry`, `VertexIndexDraw`.
 - `app` — `Viewer`, `Window`/`WindowTraits`, `Camera`, `View`, `RenderGraph`/`CommandGraph`, `Trackball`.
 - `state` — `GraphicsPipeline`, `ShaderStage`, `DescriptorSet(Layout)`, `PipelineLayout`, `Sampler`, `Image`/`ImageView`, the `*State` structs.
+- `utils` — `Builder`, `GraphicsPipelineConfigurator`, `ShaderSet`, intersectors, `CommandLine`.
 - `maths` — `vec*`/`mat*`/`quat`, `transform`, `box`/`sphere`.
 - `io` — `read`/`read_cast`/`write`, `Options`, `ReaderWriter`, `Logger`.
-- `commands` — `Command`/`Commands`, `Draw`/`DrawIndexed`, `BindVertexBuffers`/`BindIndexBuffer`.
-- `utils` — `Builder`, `GraphicsPipelineConfigurator`, `ShaderSet`, intersectors, `CommandLine`.
+
+**EXTENDED** (reach for on demand)
+- `commands` — `Command`/`Commands`, `Draw`/`DrawIndexed`, `BindVertexBuffers`/`BindIndexBuffer` (usually carried for you by `Geometry`/`VertexIndexDraw`).
 - `text` — `Text`, `TextGroup`, `Font`, `TextLayout`.
 - `lighting` — `Light`, `AmbientLight`/`DirectionalLight`/`PointLight`/`SpotLight`, `ShadowSettings`.
 - `animation` — `Animation`, `AnimationManager`, `TransformSampler`/`CameraSampler`.

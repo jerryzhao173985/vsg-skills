@@ -165,6 +165,11 @@ State command wrapping `vkCmdPushConstants`; add to a `StateGroup` to push small
 - `PushConstants::create(shaderStageFlags, offset, data)` (state/PushConstants.h:27).
 - Fields `VkShaderStageFlags stageFlags`, `uint32_t offset`, `ref_ptr<Data> data` (state/PushConstants.h:29-31).
 
+### vsg::PhongMaterialValue
+A `Data`-derived value wrapping a `PhongMaterial` struct — the material the built-in Phong shader set reads. Bind it by name (`"material"`) via `GraphicsPipelineConfigurator::assignDescriptor`; it is created by the `VSG_value(PhongMaterialValue, PhongMaterial)` macro (state/material.h:90).
+- Create with `PhongMaterialValue::create()` and edit through `value()`: `vec4 ambient`/`diffuse`/`specular`/`emissive` plus `float shininess`/`alphaMask`/`alphaMaskCutoff` (state/material.h:54-62).
+- Used in the hand-built pipeline path — see `references/examples/custom-geometry.md`.
+
 ## Idioms
 
 Build a graphics pipeline from shaders and fixed-function state, then bind it inside a StateGroup:

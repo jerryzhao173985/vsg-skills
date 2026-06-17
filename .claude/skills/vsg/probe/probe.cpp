@@ -165,23 +165,41 @@ static void probe_utils(int argc, char** argv)
     (void)bounds; (void)arguments;
 }
 
-// --- state: pipelines/descriptors/samplers (existence + the easy ctors) ---
+// --- state: CONSTRUCT a real graphics pipeline + descriptor via the configurator.
+//     This is the hardest surface in VSG, so the probe builds it (link-validated),
+//     not merely declares it. Mirrors references/examples/custom-geometry.md. ---
 static void probe_state()
 {
     auto sampler = vsg::Sampler::create();
-    vsg::ref_ptr<vsg::GraphicsPipeline> graphicsPipeline;
+
+    auto shaderSet = vsg::createPhongShaderSet();                       // utils/ShaderSet.h
+    auto config = vsg::GraphicsPipelineConfigurator::create(shaderSet); // utils/GraphicsPipelineConfigurator.h
+
+    auto material = vsg::PhongMaterialValue::create();                  // state/material.h
+    config->assignDescriptor("material", material);                    // name-resolved descriptor (before init)
+
+    vsg::DataList vertexArrays;
+    auto vertices = vsg::vec3Array::create(3);
+    config->assignArray(vertexArrays, "vsg_Vertex", VK_VERTEX_INPUT_RATE_VERTEX, vertices);
+    config->init();                                                    // builds layout + graphicsPipeline
+
+    auto stateGroup = vsg::StateGroup::create();
+    bool added = config->copyTo(stateGroup);                           // returns bool; sets prototypeArrayState
+    vsg::ref_ptr<vsg::PipelineLayout> pipelineLayout = config->layout;
+    vsg::ref_ptr<vsg::GraphicsPipeline> graphicsPipeline = config->graphicsPipeline;
+
+    // remaining headline state types: existence + linkage
     vsg::ref_ptr<vsg::ComputePipeline> computePipeline;
     vsg::ref_ptr<vsg::ShaderStage> shaderStage;
     vsg::ref_ptr<vsg::ShaderModule> shaderModule;
-    vsg::ref_ptr<vsg::PipelineLayout> pipelineLayout;
     vsg::ref_ptr<vsg::DescriptorSetLayout> descriptorSetLayout;
     vsg::ref_ptr<vsg::DescriptorSet> descriptorSet;
     vsg::ref_ptr<vsg::DescriptorImage> descriptorImage;
     vsg::ref_ptr<vsg::Image> image;
     vsg::ref_ptr<vsg::ImageView> imageView;
-    (void)sampler; (void)graphicsPipeline; (void)computePipeline; (void)shaderStage;
-    (void)shaderModule; (void)pipelineLayout; (void)descriptorSetLayout;
-    (void)descriptorSet; (void)descriptorImage; (void)image; (void)imageView;
+    (void)sampler; (void)added; (void)pipelineLayout; (void)graphicsPipeline;
+    (void)computePipeline; (void)shaderStage; (void)shaderModule;
+    (void)descriptorSetLayout; (void)descriptorSet; (void)descriptorImage; (void)image; (void)imageView;
 }
 
 // --- text / lighting / animation / threading: headline types + easy ctors ---

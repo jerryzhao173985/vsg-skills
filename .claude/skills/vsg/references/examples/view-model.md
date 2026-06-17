@@ -19,10 +19,18 @@ int main(int argc, char** argv)
     vsg::CommandLine arguments(&argc, argv);
     auto options = vsg::Options::create();
 
-    if (argc < 2) { vsg::warn("usage: view_model <model.vsgt>"); return 1; }
+    if (argc < 2)
+    {
+        vsg::warn("usage: view_model <model.vsgt>");
+        return 1;
+    }
 
     auto scene = vsg::read_cast<vsg::Node>(argv[1], options);
-    if (!scene) { vsg::fatal("Could not load model: ", argv[1]); return 1; }
+    if (!scene)
+    {
+        vsg::fatal("Could not load model: ", argv[1]);
+        return 1;
+    }
 
     // frame the camera from the loaded scene's bounds
     auto computeBounds = vsg::ComputeBounds::create();
@@ -35,7 +43,11 @@ int main(int argc, char** argv)
     auto traits = vsg::WindowTraits::create();
     traits->windowTitle = "view_model";
     auto window = vsg::Window::create(traits);
-    if (!window) { vsg::fatal("Could not create window."); return 1; }
+    if (!window)
+    {
+        vsg::fatal("Could not create window.");
+        return 1;
+    }
 
     auto viewer = vsg::Viewer::create();
     viewer->addWindow(window);

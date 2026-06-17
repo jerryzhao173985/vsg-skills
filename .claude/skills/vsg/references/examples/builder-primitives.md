@@ -26,7 +26,7 @@ int main(int argc, char** argv)
     auto directional = vsg::DirectionalLight::create();
     directional->color = vsg::vec3(1.0f, 1.0f, 1.0f);
     directional->intensity = 0.8f;
-    directional->direction = vsg::vec3(0.5f, 1.0f, -1.0f);
+    directional->direction = vsg::dvec3(0.5, 1.0, -1.0);
     scene->addChild(directional);
 
     // primitives positioned with MatrixTransforms
@@ -40,9 +40,14 @@ int main(int argc, char** argv)
         scene->addChild(transform);
     };
 
-    vsg::GeometryInfo box;     placeAt(builder->createBox(box, stateInfo),         vsg::dvec3(-2.0, 0.0, 0.0));
-    vsg::GeometryInfo sphere;  placeAt(builder->createSphere(sphere, stateInfo),   vsg::dvec3( 0.0, 0.0, 0.0));
-    vsg::GeometryInfo capsule; placeAt(builder->createCapsule(capsule, stateInfo), vsg::dvec3( 2.0, 0.0, 0.0));
+    vsg::GeometryInfo box;
+    placeAt(builder->createBox(box, stateInfo), vsg::dvec3(-2.0, 0.0, 0.0));
+
+    vsg::GeometryInfo sphere;
+    placeAt(builder->createSphere(sphere, stateInfo), vsg::dvec3(0.0, 0.0, 0.0));
+
+    vsg::GeometryInfo capsule;
+    placeAt(builder->createCapsule(capsule, stateInfo), vsg::dvec3(2.0, 0.0, 0.0));
 
     // ... viewer + camera + render loop (see hello-vsg.md) ...
 }

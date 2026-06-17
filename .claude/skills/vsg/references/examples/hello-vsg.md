@@ -26,7 +26,11 @@ int main(int argc, char** argv)
     auto traits = vsg::WindowTraits::create();
     traits->windowTitle = "hello_vsg";
     auto window = vsg::Window::create(traits);
-    if (!window) { vsg::fatal("Could not create window."); return 1; }
+    if (!window)
+    {
+        vsg::fatal("Could not create window.");
+        return 1;
+    }
 
     auto viewer = vsg::Viewer::create();
     viewer->addWindow(window);

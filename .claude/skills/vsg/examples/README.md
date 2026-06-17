@@ -12,6 +12,7 @@ the documented examples ground in the real API.
 | `hello_vsg.cpp` | minimal app: one box, trackball, render loop |
 | `view_model.cpp` | load a model from argv, frame from bounds, view it |
 | `builder_primitives.cpp` | Builder box/sphere/capsule placed with transforms, lit |
+| `custom_geometry.cpp` | hand-built pipeline: own vertex arrays + ShaderSet + GraphicsPipelineConfigurator + material |
 
 ## Build
 

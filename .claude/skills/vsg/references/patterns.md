@@ -71,7 +71,7 @@ transform->addChild(box);                                           // nodes/Gro
 scene->addChild(transform);                                         // nodes/Group.h:39
 ```
 
-`Builder` also offers `createSphere`, `createCylinder`, `createCone`, `createCapsule`, `createDisk`, `createQuad`, and `createHeightField` with the same `(GeometryInfo, StateInfo)` signature (utils/Builder.h:124-130). `StateGroup::create()` (nodes/StateGroup.h:31) is used when you assemble pipelines manually instead of via the Builder.
+`Builder` also offers `createSphere`, `createCylinder`, `createCone`, `createCapsule`, `createDisk`, `createQuad`, and `createHeightField` with the same `(GeometryInfo, StateInfo)` signature (utils/Builder.h:124-130). `StateGroup::create()` (nodes/StateGroup.h:31) is used when you assemble pipelines manually instead of via the Builder. For the full hand-built path — own vertex arrays + `ShaderSet` + `GraphicsPipelineConfigurator` + a material descriptor + `VertexIndexDraw`, with no Builder — see the worked, compile-verified `references/examples/custom-geometry.md`.
 
 ## Camera & interaction
 
