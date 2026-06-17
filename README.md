@@ -65,6 +65,22 @@ Two independent grounding gates ship with the skill.
 
   If a `VulkanSceneGraph` checkout sits beside this repo, `VSG_SRC` is auto-detected.
 
+## Self-test (real-usage)
+
+Prove the skill produces correct code by spawning a fresh, **read-only** Claude session and
+compiling its output:
+
+```bash
+tools/test-skill.sh "load a model from argv and view it with a trackball and a directional light"
+# -> SKILL_TEST=PASS | FAIL
+```
+
+It runs `claude -p "/vsg <prompt>"` whitelisted to read-only tools (no file writes, no command
+execution), extracts the generated `main.cpp`/`CMakeLists.txt`, and builds them against the
+installed `vsg::vsg`. A compile failure is a skill defect to fix. This is the
+iterate-on-real-usage loop (needs the `claude` CLI + API credits). It is how the skill was
+last validated: a clean-room session generated a model-viewer that compiled with zero defects.
+
 ## Provenance & version
 
 - **Authoritative source**: the VSG headers (`include/vsg`), pinned to commit `3b986a00`

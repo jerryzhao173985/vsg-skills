@@ -90,6 +90,7 @@ A `ConstVisitor` that traverses a scene graph and computes an overall bounding b
 Parses `argc`/`argv`, consuming matched arguments as it goes (utils/CommandLine.h:41-43).
 
 - Construct with pointers to your main args: `vsg::CommandLine arguments(&argc, argv)` (utils/CommandLine.h:46). Note: this is a plain class, not a `vsg::Object`, so there is no `create()`.
+- `operator[](int i)` returns the i-th raw argument as a `char*` — e.g. `arguments[1]` for the first positional argument, usable directly as a file path to `read_cast` (utils/CommandLine.h:54-55).
 - `read(match, args...)` returns true and removes the matched option and its values when `match` is present; supports multiple typed values, including vec/mat element counts (utils/CommandLine.h:124-152).
 - `read({alias1, alias2}, args...)` matches any of several option spellings (utils/CommandLine.h:154-160).
 - `value(defaultValue, match, args...)` returns the parsed value or the supplied default (utils/CommandLine.h:162-168).
