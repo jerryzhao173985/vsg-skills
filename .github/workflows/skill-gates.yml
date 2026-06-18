@@ -1,0 +1,29 @@
+name: skill-gates
+
+# Enforce the vsg skill's invariants on every push/PR: every file:line citation resolves
+# against the PINNED VSG source, the routing table points at real files, every component/
+# foundation file ships its sections, and each example doc matches its .cpp twin.
+#
+# These are the pure-file gates (no Vulkan, no build). The --probe / examples-build /
+# test-skill gates need an installed vsg::vsg + the claude CLI, so run those locally.
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout vsg-skills
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned VSG source (commit the citations reference)
+        uses: actions/checkout@v4
+        with:
+          repository: vsg-dev/VulkanSceneGraph
+          ref: 3b986a003e20a68840f183d4d0ea10020adcf9c9
+          path: _vsg-src
+
+      - name: Run skill gates (routing, headings, citations, example-sync)
+        run: VSG_SRC="$GITHUB_WORKSPACE/_vsg-src" bash .claude/skills/vsg/scripts/check-skill-docs.sh
