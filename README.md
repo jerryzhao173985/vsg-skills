@@ -65,6 +65,8 @@ Two independent grounding gates ship with the skill.
 
   If a `VulkanSceneGraph` checkout sits beside this repo, `VSG_SRC` is auto-detected.
 
+- **Deep audit** (stronger than the resolve-only gate): `python3 tools/check-claims.py .claude/skills/vsg <VulkanSceneGraph-checkout>` semantically confirms each citation's symbol actually appears at its line, and flags broken internal links / orphaned reference files. Re-run after a VSG version bump to catch drift.
+
 ## Self-test (real-usage)
 
 Prove the skill produces correct code by spawning a fresh, **read-only** Claude session and
@@ -89,7 +91,7 @@ last validated: a clean-room session generated a model-viewer that compiled with
 - **Validated against**: a locally installed `vsg::vsg` `1.1.14` (one patch behind the
   pinned commit — the stable core API is identical across that delta; see
   `.claude/skills/vsg/probe/README.md`).
-- Last full audit: `CHECK_SKILL_DOCS=PASS` (7 gates) — 1295/1295 citations resolve, 0 `[VERIFY]`,
+- Last full audit: `CHECK_SKILL_DOCS=PASS` (7 gates) — 1296/1296 citations resolve, 0 `[VERIFY]`,
   example docs match their `.cpp` twins (EXAMPLE-SYNC), the probe constructs a real pipeline +
   descriptor, and probe + 4 examples + the `examples-consumer/` app all compile & link. Proven
   by **clean-room generation**: an agent given only this skill (no headers) generated a
